@@ -1,4 +1,4 @@
-### Container for AWS S3 mountpoint
+### Container for AWS mountpoint-S3
 
 https://github.com/awslabs/mountpoint-s3
 
