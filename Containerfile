@@ -1,4 +1,4 @@
-FROM hashicorp/terraform:latest as CA
+FROM hashicorp/terraform:latest as certs
 COPY trusted_ca.tf .
 
 ARG AWS_ENDPOINT_URL_S3
@@ -16,7 +16,7 @@ RUN set -x \
 
 FROM registry.fedoraproject.org/fedora-minimal:latest
 ARG VERSION
-COPY --from=CA ca-cert.pem /etc/pki/ca-trust/source/anchors/
+COPY --from=certs ca-cert.pem /etc/pki/ca-trust/source/anchors/
 
 RUN set -x \
   \
