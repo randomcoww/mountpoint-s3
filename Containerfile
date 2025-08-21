@@ -14,12 +14,13 @@ RUN set -x \
   && terraform apply -auto-approve \
   && cat outputs/* > ca-cert.pem
 
-ARG VERSION
-
-FROM public.ecr.aws/mountpoint-s3-csi-driver/aws-mountpoint-s3-csi-driver:$VERSION
+FROM registry.fedoraproject.org/fedora-minimal:latest AS ca
 COPY --from=certs ca-cert.pem /etc/pki/ca-trust/source/anchors/
 
 RUN set -x \
   \
-  # && VERSION=$(wget -O - https://api.github.com/repos/awslabs/mountpoint-s3/releases/latest | grep tag_name | cut -d '"' -f 4 | tr -d "mountpoint\-s3-") \
   && update-ca-trust
+
+ARG VERSION
+FROM public.ecr.aws/mountpoint-s3-csi-driver/aws-mountpoint-s3-csi-driver:$VERSION
+COPY --from=ca /etc/pki/ca-trust/extracted/ /etc/pki/ca-trust/extracted/
