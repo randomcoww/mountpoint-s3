@@ -14,13 +14,28 @@ RUN set -x \
   && terraform apply -auto-approve \
   && cat outputs/* > ca-cert.pem
 
+ARG CSI_VERSION
+FROM public.ecr.aws/mountpoint-s3-csi-driver/aws-mountpoint-s3-csi-driver:$CSI_VERSION AS csi
+
 FROM registry.fedoraproject.org/fedora-minimal:latest AS ca
 COPY --from=certs ca-cert.pem /etc/pki/ca-trust/source/anchors/
+COPY --from=csi /bin/aws-s3-csi-driver /bin
+COPY --from=csi /bin/aws-s3-csi-controller /bin
+COPY --from=csi /bin/aws-s3-csi-mounter /bin
+
+ARG MOUNTPOINT_VERSION
+ENV MOUNTPOINT_VERSION=${MOUNTPOINT_VERSION}
+ENV MOUNTPOINT_BIN_DIR=/mountpoint-s3/bin
 
 RUN set -x \
   \
-  && update-ca-trust
-
-ARG VERSION
-FROM public.ecr.aws/mountpoint-s3-csi-driver/aws-mountpoint-s3-csi-driver:$VERSION
-COPY --from=ca /etc/pki/ca-trust/extracted/ /etc/pki/ca-trust/extracted/
+  && update-ca-trust \
+  && microdnf install -y \
+    https://s3.amazonaws.com/mountpoint-s3-release/$MOUNTPOINT_VERSION/$(arch)/mount-s3-$MOUNTPOINT_VERSION-$(arch).rpm \
+  && microdnf clean all \
+  && rm -rf \
+    /var/cache \
+    /var/log/* \
+  \
+  && mkdir -p $MOUNTPOINT_BIN_DIR \
+  && ln -s $(which mount-s3) $MOUNTPOINT_BIN_DIR/
