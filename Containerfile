@@ -17,6 +17,7 @@ RUN set -x \
 ARG CSI_VERSION
 FROM public.ecr.aws/mountpoint-s3-csi-driver/aws-mountpoint-s3-csi-driver:$CSI_VERSION AS csi
 
+# Ref: https://github.com/awslabs/mountpoint-s3-csi-driver/blob/main/Dockerfile
 FROM registry.fedoraproject.org/fedora-minimal:latest AS ca
 COPY --from=certs ca-cert.pem /etc/pki/ca-trust/source/anchors/
 COPY --from=csi /bin/aws-s3-csi-driver /bin

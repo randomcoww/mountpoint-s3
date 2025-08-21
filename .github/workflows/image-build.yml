@@ -45,7 +45,7 @@ jobs:
         /kaniko/executor \
           --dockerfile="./Containerfile" \
           --context="${{ github.repositoryUrl }}#${{ github.ref }}#${{ github.sha }}" \
-          --destination="ghcr.io/${{ github.repository }}:$CSI_VERSION.$TAG" \
+          --destination="ghcr.io/${{ github.repository }}:$MOUNTPOINT_VERSION.$TAG" \
           --build-arg MOUNTPOINT_VERSION=$MOUNTPOINT_VERSION \
           --build-arg CSI_VERSION=$CSI_VERSION \
           --build-arg AWS_ENDPOINT_URL_S3=$AWS_ENDPOINT_URL_S3 \
