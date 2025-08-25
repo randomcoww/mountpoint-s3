@@ -40,8 +40,8 @@ jobs:
           }
         }
         EOF
-
         echo -e "$TRUSTED_CA" > $DOCKER_CONFIG/distribution.crt
+
         /kaniko/executor \
           --dockerfile="./Containerfile" \
           --context="${{ github.repositoryUrl }}#${{ github.ref }}#${{ github.sha }}" \

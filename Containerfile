@@ -5,6 +5,7 @@ ARG TRUSTED_CA
 
 RUN set -x \
   \
+  && mkdir -p /etc/pki/ca-trust/source/anchors \
   && echo -e "$TRUSTED_CA" > /etc/pki/ca-trust/source/anchors/ca-cert.pem \
   && update-ca-trust \
   && microdnf install -y \
