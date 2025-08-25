@@ -41,7 +41,7 @@ jobs:
         }
         EOF
 
-        echo -e $TRUSTED_CA > $DOCKER_CONFIG/distribution.crt
+        echo -e "$TRUSTED_CA" > $DOCKER_CONFIG/distribution.crt
         /kaniko/executor \
           --dockerfile="./Containerfile" \
           --context="${{ github.repositoryUrl }}#${{ github.ref }}#${{ github.sha }}" \
@@ -49,7 +49,7 @@ jobs:
           --destination="distribution.default/${{ github.repository }}:v$VERSION.$TAG" \
           --registry-certificate=distribution.default=$DOCKER_CONFIG/distribution.crt \
           --build-arg VERSION=$VERSION \
-          --build-arg TRUSTED_CA=$TRUSTED_CA \
+          --build-arg TRUSTED_CA="$TRUSTED_CA" \
           --push-retry 3
   cleanup:
     needs:
