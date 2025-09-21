@@ -1,4 +1,4 @@
-### Container for AWS mountpoint-S3
+### Container for AWS mountpoint-S3 with internal CA
 
 https://github.com/awslabs/mountpoint-s3
 
